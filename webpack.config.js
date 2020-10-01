@@ -1,5 +1,6 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const path = require('path')
 
 module.exports = {
   module: {
@@ -39,7 +40,6 @@ module.exports = {
         ]
       }
     ],
-
   },
   plugins: [
     new HtmlWebPackPlugin({
@@ -53,5 +53,13 @@ module.exports = {
   ],
   resolve: {
     extensions: [".webpack.js", ".web.js", ".js", ".json", ".jsx"]
+  },
+  devServer: {
+    historyApiFallback: true,
+  },
+  output: {
+    path: `${__dirname}/dist`,
+    filename: 'bundle.js',
+    publicPath: '/',
   }
 };

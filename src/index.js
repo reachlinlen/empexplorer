@@ -1,16 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom"
+
 import Home from '../src/Pages/Home'
-import { Router, Link } from "@reach/router"
+import Overview from './Pages/Overview'
 
 import './assets/main.css'
 
-const App = ({ children }) => (
-  <Router>
-    <Home path="/" />
-    {/* <Overview path="overview/:empname" /> */}
-  </Router>
-)
-
-
-ReactDOM.render(<App />, document.getElementById("container"))
+ReactDOM.render(
+  <BrowserRouter>
+    {/* <Routes>
+      <Home path="/" />
+      <Overview path="overview/:name" />
+    </Routes> */}
+    <Switch>
+      <Route path="/" exact component={Home} />
+      <Route path="/overview/:name" component={Overview} />
+    </Switch>
+  </BrowserRouter>,
+  document.getElementById("container"))
