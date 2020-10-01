@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Typography } from '@material-ui/core'
 import Axios from 'axios'
-import { useParams } from 'react-router-dom'
-
+import { Link, useParams } from 'react-router-dom'
 import { BASE_URL } from '../../utilities/constants'
 
 function Overview() {
   let { name } = useParams()
-  console.log({ name })
   const [empList, setEmpList] = useState({
     directReportees: [],
     nonDirectReportees: []
@@ -60,33 +58,36 @@ function Overview() {
   }
 
   return (
-    <>
+    <div class="max-w-screen-lg mx-auto grid place-content-evenly mt-16">
       <Typography variant="h2">Employee Overview</Typography>
-      <Typography variant="h5">Subordinates of Employee {name}</Typography>
+      <Link to="/" class="flex justify-end underline">Home</Link>
+      <div class="mt-24 underline">
+        <Typography variant="h5">Subordinates of Employee {name}</Typography>
+      </div>
       {
 
         empList['directReportees'].length > 0 &&
-        <>
+        <div class="mt-8">
           <Typography variant="h6">Direct Subordinates</Typography>
           <ul>
             {
               empList['directReportees'].map(emp => <li key={emp}><Typography variant="subtitle1">{emp}</Typography></li>)
             }
           </ul>
-        </>
+        </div>
       }
       {
         empList['nonDirectReportees'].length > 0 &&
-        <>
+        <div class="mt-8">
           <Typography variant="h6">Non Direct Subordinates</Typography>
           <ul>
             {
               empList['nonDirectReportees'].map(emp => <li key={emp}><Typography variant="subtitle1">{emp}</Typography></li>)
             }
           </ul>
-        </>
+        </div>
       }
-    </>
+    </div>
   )
 }
 
