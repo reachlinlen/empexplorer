@@ -9,8 +9,8 @@ function Overview() {
   let { name } = useParams()
   console.log({ name })
   const [empList, setEmpList] = useState({
-    directReportees: null,
-    nonDirectReportees: null
+    directReportees: [],
+    nonDirectReportees: []
   })
 
   useEffect(() => {
@@ -62,19 +62,26 @@ function Overview() {
   return (
     <>
       <Typography variant="h2">Employee Overview</Typography>
-      <Typography variant="h6">{name}</Typography>
+      <Typography variant="h5">Subordinates of Employee {name}</Typography>
       {
-        empList['directReportees'] !== null &&
+
+        empList['directReportees'].length > 0 &&
         <>
+          <Typography variant="h6">Direct Subordinates</Typography>
           <ul>
             {
-              empList['directReportees'].map(emp => <li key={emp}>{emp}</li>)
+              empList['directReportees'].map(emp => <li key={emp}><Typography variant="subtitle1">{emp}</Typography></li>)
             }
           </ul>
+        </>
+      }
+      {
+        empList['nonDirectReportees'].length > 0 &&
+        <>
           <Typography variant="h6">Non Direct Subordinates</Typography>
           <ul>
             {
-              empList['nonDirectReportees'].map(emp => <li key={emp}>{emp}</li>)
+              empList['nonDirectReportees'].map(emp => <li key={emp}><Typography variant="subtitle1">{emp}</Typography></li>)
             }
           </ul>
         </>
