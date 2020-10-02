@@ -1,65 +1,137 @@
-const HtmlWebPackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack");
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const path = require('path')
+const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
-module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader"
-        }
-      },
-      {
-        test: /\.html$/,
-        use: [
-          {
-            loader: "html-loader"
-          }
-        ]
-      },
-      {
-        test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          {
-            loader: 'postcss-loader',
-            options: {
-              postcssOptions: {
-                ident: 'postcss',
-                plugins: [
-                  require('tailwindcss'),
-                  require('autoprefixer'),
-                ],
+module.exports = (env, options) => {
+  const isDevelopment = options.mode !== "production";
+
+  return {
+    mode: isDevelopment ? "development" : "production",
+    target: "web",
+    entry: "./src/index.js",
+    output: {
+      filename: isDevelopment ? "[name].js" : "[name].[contenthash:8].js",
+      path: path.join(__dirname, "/dist"),
+    },
+    resolve: {
+      extensions: [".ts", ".tsx", ".js", ".jsx"],
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js(x)?$/,
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: "babel-loader",
+              options: {
+                cacheDirectory: true,
               },
-            }
+            },
+          ],
+        },
+        {
+          test: /\.css$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+              options: {
+                hmr: isDevelopment ? true : false,
+              },
+            },
+            {
+              loader: "css-loader",
+              options: {
+                sourceMap: isDevelopment ? true : false,
+              },
+            },
+          ],
+        },
+      ],
+    },
+    devtool: isDevelopment
+      ? "eval-cheap-module-source-map"
+      : "",
+    optimization: {
+      minimizer: [
+        new OptimizeCssAssetsPlugin({
+          cssProcessorOptions: {
+            map: {
+              annotation: true,
+              inline: false,
+            },
           },
-        ]
-      }
+        }),
+        new TerserPlugin({
+          extractComments: false,
+        }),
+      ],
+      runtimeChunk: {
+        name: "runtime",
+      },
+      splitChunks: {
+        chunks: "all",
+        cacheGroups: {
+          vendor: {
+            name: "vendors",
+            test: /[\\/]node_modules[\\/]/,
+          },
+        },
+        name: false,
+      },
+    },
+    performance: {
+      hints: false,
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        minify: isDevelopment
+          ? false
+          : {
+            collapseWhitespace: true,
+            keepClosingSlash: true,
+            minifyCSS: true,
+            minifyJS: true,
+            minifyURLs: true,
+            removeComments: true,
+            removeEmptyAttributes: true,
+            removeRedundantAttributes: true,
+            removeScriptTypeAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            useShortDoctype: true,
+          },
+        template: "./src/index.html",
+      }),
+      new MiniCssExtractPlugin({
+        filename: isDevelopment ? "[name].css" : "[name].[contenthash:8].css",
+      }),
+      ...(isDevelopment ? [new webpack.HotModuleReplacementPlugin()] : []),
     ],
-  },
-  plugins: [
-    new HtmlWebPackPlugin({
-      template: "./src/index.html",
-      filename: "./index.html"
-    }),
-    new MiniCssExtractPlugin({
-      filename: "styles.css",
-      chunkFilename: "styles.css"
-    }),
-  ],
-  resolve: {
-    extensions: [".webpack.js", ".web.js", ".js", ".json", ".jsx"]
-  },
-  devServer: {
-    historyApiFallback: true,
-  },
-  output: {
-    path: `${__dirname}/dist`,
-    filename: 'bundle.js',
-    publicPath: '/',
-  }
+    stats: {
+      assetsSort: "!size",
+      builtAt: false,
+      children: false,
+      entrypoints: false,
+      errors: true,
+      errorDetails: true,
+      hash: false,
+      modules: false,
+      timings: false,
+    },
+    devServer: {
+      contentBase: "dist",
+      historyApiFallback: true,
+      host: "0.0.0.0",
+      hot: true,
+      port: 8080,
+    },
+    watchOptions: {
+      aggregateTimeout: 300,
+      ignored: /node_modules/,
+      poll: true,
+    },
+  };
 };
