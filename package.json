@@ -6,8 +6,8 @@
   "author": "Lenin",
   "license": "ISC",
   "scripts": {
-    "start": "npm run watch:css && webpack-dev-server --open --mode development",
-    "build": "npm run build:css && webpack --mode production",
+    "start": "npm run watch:css && webpack-dev-server --mode=development",
+    "build": "npm run build:css && rm -rf dist && webpack --mode=production",
     "build:css": "postcss src/assets/tailwind.css -o src/assets/main.css",
     "watch:css": "postcss src/assets/tailwind.css -o src/assets/main.css"
   },
@@ -22,10 +22,12 @@
     "html-loader": "^1.3.1",
     "html-webpack-plugin": "^4.5.0",
     "mini-css-extract-plugin": "^0.11.2",
+    "optimize-css-assets-webpack-plugin": "^5.0.4",
     "postcss": "^8.1.1",
     "postcss-cli": "^8.0.0",
     "postcss-loader": "^4.0.2",
     "tailwindcss": "^1.8.10",
+    "terser-webpack-plugin": "^4.2.2",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
