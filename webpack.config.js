@@ -104,6 +104,7 @@ module.exports = (env, options) => {
             useShortDoctype: true,
           },
         template: "./src/index.html",
+        filename: "index.html"
       }),
       new MiniCssExtractPlugin({
         filename: isDevelopment ? "[name].css" : "[name].[contenthash:8].css",
